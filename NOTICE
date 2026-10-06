@@ -1,0 +1,25 @@
+M3 Expressive Foundations (a Claude Code skill)
+Copyright 2026 Shimon Salamon
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party material
+--------------------
+
+assets/material-shapes.css, assets/material-shapes.svg, assets/material-shapes.json
+  Geometry of the 35 Material 3 Expressive library shapes, derived from AndroidX
+  androidx.compose.material3.MaterialShapes (https://github.com/androidx/androidx),
+  Copyright The Android Open Source Project, licensed under the Apache License, Version 2.0.
+  Exported with the community TypeScript port shape-morph@0.4.0 (MIT License) and
+  cross-checked against material-shapes-ts@0.3.0.
+
+scripts/generate-scheme.mjs
+  Uses @material/material-color-utilities
+  (https://github.com/material-foundation/material-color-utilities), licensed under the
+  Apache License, Version 2.0. The library is a dependency you install; it is not bundled here.
+
+Material Design
+  The references summarize the public Material Design 3 guidelines (https://m3.material.io)
+  in original wording and link to the sources. "Material Design" and "Material You" are
+  trademarks of Google LLC. This project is unofficial and is not affiliated with,
+  sponsored by or endorsed by Google.
