@@ -32,6 +32,7 @@ Foundations only — the rules every component is built from, not individual com
 | `assets/m3-expressive-tokens.css` | Every token and web helper as CSS custom properties (light/dark, three contrast levels, two motion schemes) |
 | `assets/material-shapes.*` | The shape library as CSS `shape()` values, SVG clip paths and raw JSON |
 | `scripts/generate-scheme.mjs` | Generates a color scheme from a seed or brand color (needs `@material/material-color-utilities`) |
+| `scripts/fetch-m3-spec.mjs` | Reads a component's guidance and token values from m3.material.io (Node 18+, no dependencies) |
 
 ## Install
 
