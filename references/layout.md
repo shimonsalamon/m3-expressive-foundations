@@ -23,6 +23,8 @@ scaffold of bars, rails and panes, renamed window size classes to breakpoints an
 - [Line length](#line-length)
 - [Bidirectionality and RTL](#bidirectionality-and-rtl)
 - [Applying it on the web](#applying-it-on-the-web)
+- [Screen patterns from product reviews](#screen-patterns-from-product-reviews): filters on the list, a list and
+  its main action on a phone, quiet secondary actions
 - [Do and don't](#do-and-dont)
 - [Auditing](#auditing)
 - [Sources](#sources)
@@ -1233,6 +1235,34 @@ DevTools foldable emulation.
 
 On a seamless fold the hinge width is 0, so the pane padding provides the separation. In JS,
 `window.viewport.segments` lists the segments (one entry when unfolded).
+
+## Screen patterns from product reviews
+
+Patterns that held up when a product owner reviewed an M3 Expressive redesign, and the alternatives they rejected.
+They follow from Material's guidance (filter chips, FAB placement, emphasis) but are our synthesis, not stated rules.
+
+**Filters sit on the list.** Show filter chips in a row directly above the list they filter, one tap each, scrolling
+sideways on a narrow window rather than wrapping. A filter button that reveals the chips spends a whole row on one
+icon and adds a tap. Keep the button only when the filters are many, or are fields rather than choices.
+
+```css
+.list-filters .chip-row { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+```
+
+**A list and its main action, not tabs, on a phone.** When a compact layout shows a list (call history, messages) and
+the action that makes a new item (a dialpad, compose), don't put them in tabs side by side. Open on the list, with the
+action as a FAB at the bottom end; the action's screen gets a way back. Tabs make the two look like equals and make the
+action a tab switch away. On wider windows the same pair is list-detail, both visible.
+
+- Keep the FAB clear of content: give the scrolling list bottom padding of the FAB's height plus its margin, so the
+  last item can scroll out from under it.
+- Put the way back where the way in was. If the FAB sat at the bottom end, put the action screen's "back to the list"
+  control near that corner too, so the two toggle under the same thumb.
+
+**Secondary actions stay quiet.** Next to a screen's primary action (a Call button), a secondary one (Call history,
+Add contact) is a plain icon button with a tooltip: no container, standard size, square state layer. Giving it a FAB or
+a filled container competes with the primary action, and stretching an icon button to fill a slot makes its state
+layer an oval. Keep a matching empty slot on the other side if the primary action has to stay centered.
 
 ## Do and don't
 

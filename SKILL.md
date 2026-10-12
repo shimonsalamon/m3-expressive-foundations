@@ -57,8 +57,9 @@ Use it in any framework, or none, for:
 - Auditing a page, component library, stylesheet, screenshot or design spec against these foundations.
 
 It does not give component specs (sizes, anatomy, component tokens); components appear only as examples of a
-foundation. For a component's exact values, open its page under <https://m3.material.io/components> (the Specs
-tab) and build it from these foundations. Nor does the skill cover Material 2 or native Android.
+foundation. For a component's exact values, run `node scripts/fetch-m3-spec.mjs components/<name> --tokens`, which
+reads the page and its token table from m3.material.io (the site itself is a JavaScript shell that fetching tools
+see as empty), and build it from these foundations. Nor does the skill cover Material 2 or native Android.
 
 ## How to use it
 
@@ -69,7 +70,9 @@ tab) and build it from these foundations. Nor does the skill cover Material 2 or
    hand-picking hex values, so every role, theme and contrast level stays paired.
 3. Structure the page with `references/layout.md`; style it with `color.md`, `typography.md`, `shape.md`, `elevation.md`;
    add behavior with `interaction-states.md` and `motion.md`. Open only what the task touches: each file stands alone.
-   Look up a single value in `references/quick-reference.md`.
+   Look up a single value in `references/quick-reference.md`. On Angular Material, start from
+   `references/angular-material.md`: it maps these tokens to Material's and says how to add Expressive press shapes
+   and spring motion to Material's own components.
 4. Before finishing, run the [Quick audit](references/audit-checklist.md#quick-audit) in
    `references/audit-checklist.md`, plus the Auditing list at the end of each reference you used.
 
@@ -98,13 +101,14 @@ tab) and build it from these foundations. Nor does the skill cover Material 2 or
 | File | Open it when |
 |---|---|
 | `references/expressive-principles.md` | Deciding how much expression a product or screen carries, placing hero moments, building hierarchy around one action, token architecture and contexts, overriding the shipped file, theming, the accessibility floor, web platform status |
-| `references/color.md` | Choosing or auditing roles and pairs, emphasis with accent families and surface tones, a grouped list (settings) screen, dark mode, contrast levels and an appearance-settings control, HCT and tonal palettes, seed, brand or image schemes, custom colors such as success, MCU code |
+| `references/color.md` | Choosing or auditing roles and pairs, emphasis with accent families and surface tones, a grouped list (settings) screen, dark mode, contrast levels and an appearance-settings control, HCT and tonal palettes, seed, brand or image schemes, custom colors such as success, fixed conventional colors (call red and green), MCU code |
 | `references/typography.md` | Setting or auditing text styles, baseline vs emphasized type, typefaces and font loading (including self-hosted and offline), Roboto Flex axes, tall scripts (language height), readability and line length, editorial moments |
-| `references/shape.md` | Corner radii, pills and "full", asymmetric and RTL corners, nested radii and grouped-list corners, library shapes for crops and avatars, shape morphing, cut corners |
-| `references/motion.md` | Any animation: schemes, spatial vs effects, speeds, curves vs `linear()` traces, legacy easing and duration, transition patterns, reduced motion, WAAPI, JS springs, View Transitions |
-| `references/elevation.md` | Separating surfaces, shadows (including on clipped shapes), a scrolled app bar, modals and scrims, z-index and the top layer, migrating surface-tint code |
+| `references/shape.md` | Corner radii, pills and "full", asymmetric and RTL corners, nested radii and grouped-list corners, pressed and selected shapes by button size and a site-wide press morph, button groups, library shapes for crops and avatars, shape morphing, cut corners |
+| `references/motion.md` | Any animation: schemes, spatial vs effects, speeds, curves vs `linear()` traces, legacy easing and duration, transition patterns, reduced motion and an in-app Reduce motion setting, restraint in navigation, matching enter and exit, items arriving in virtualized lists, WAAPI, JS springs, View Transitions |
+| `references/elevation.md` | Separating surfaces, shadows (including on clipped shapes), a scrolled app bar, modals and scrims (and none in see-through windows), z-index and the top layer, migrating surface-tint code |
 | `references/interaction-states.md` | Hover, focus, pressed, dragged, disabled and selected styles; state layers, focus rings (also on native range, switch and radio inputs), ripples, touch targets, state shown through shape |
-| `references/layout.md` | Page structure, breakpoints, panes and list-detail, margins, spacing tokens, density, grids, foldables, RTL; media-query, container-query and drag-handle code |
+| `references/layout.md` | Page structure, breakpoints, panes and list-detail, margins, spacing tokens, density, grids, foldables, RTL; media-query, container-query and drag-handle code; screen patterns from product reviews (filter chips on lists, list plus FAB instead of tabs on a phone, quiet secondary actions) |
+| `references/angular-material.md` | An app built on Angular Material: `--mat-sys-*` vs `--md-sys-*`, restyling through component tokens, the press morph on Material's buttons, retiming Material's dialog, menu, select, snackbar, tooltip, switch and tab animations, `animate.enter`/`animate.leave`, Expressive vertical menus and a menu with a search, gotchas, checking after an upgrade |
 | `references/quick-reference.md` | Looking up an exact value: breakpoints, margins, spacing, corners, the type scale, springs and legacy easing, state opacities, focus ring, targets, elevation and shadows, baseline colors, and every `--m3e-*` helper |
 | `references/audit-checklist.md` | Auditing any UI (live page, code, screenshot or design spec): the Quick audit, checks by foundation with IDs and severities, grep set, console snippets T1–T8, findings report template |
 | `assets/m3-expressive-tokens.css` | Whenever you write CSS: every token and web helper, plus the switches below. It is the source of truth for every value |
@@ -112,6 +116,7 @@ tab) and build it from these foundations. Nor does the skill cover Material 2 or
 | `assets/material-shapes.svg` | The same 35 shapes as `clipPath` elements (`#m3-shape-<id>`) to inline once, for older browsers |
 | `assets/material-shapes.json` | Raw path data in a 0..1 box, for SVG drawing, canvas or morph tooling |
 | `scripts/generate-scheme.mjs` | Generating a seed or brand scheme in the token file's format, plus custom colors as `--app-color-*` product tokens at all three contrast levels; needs `@material/material-color-utilities` |
+| `scripts/fetch-m3-spec.mjs` | Reading a component's guidance and exact token values from m3.material.io (`--list [filter]`, `<page> --tokens`, `--all-contexts`); Node 18+, no dependencies |
 
 ## Quick start
 

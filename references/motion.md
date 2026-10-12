@@ -444,6 +444,43 @@ carousel auto-advance, needs a pause control.
 expressive tactics on one screen, and keep hero moments to one or two per product. Motion should never
 be the only signal of a state or hierarchy change: pair it with color, shape or text.
 
+### An in-app setting
+
+The system setting is the baseline, but people reach for the product's own settings first, and some want less motion
+in one app only. Offer a **Reduce motion** switch (under Appearance, with the theme) that gives the same result as the
+system setting, by setting the same helper values from an attribute:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  :root { --m3e-motion-spring-fast-spatial: 1ms linear; /* ...every spatial helper, as the token file does */ }
+}
+:root[data-reduce-motion] {
+  --m3e-motion-spring-fast-spatial: 1ms linear; /* the same list */
+}
+```
+
+- **The system setting wins.** While `prefers-reduced-motion: reduce` matches, show the switch on and disabled, with
+  a note that it's on in the device's settings; turning the app's switch off can't bring the motion back.
+- **Store it per device**, like the theme: it's about this screen and this person's comfort, not the account.
+- **Every window follows.** Pop-out windows, Picture-in-Picture windows and iframes have their own `<html>`; copy the
+  attribute to each when it changes.
+- **Hand-written media queries miss it.** A component with its own `@media (prefers-reduced-motion: reduce)` block
+  doesn't see the attribute. Route timing through the helpers instead, and the attribute reaches it for free.
+
+### Restraint in navigation
+
+Animating whole panes on every navigation reads as slow, even with the right pattern and timing: in review, a product
+that faded and slid its content area on every section change and its detail pane on every list selection had both
+removed, while the smaller motion around them stayed. Frequent navigation wants the content to switch in place.
+
+- **Move what changed, where it changed.** A side panel widens out of its rail and narrows back into it; a new list
+  item rises into place; a navigation indicator grows out of the selected destination. These read as the interface
+  responding, not as a page being swapped.
+- **Keep pane transitions for rare, meaningful moves:** opening a full-screen detail from a card (container
+  transform), a one-off flow.
+- **View Transitions take the page over.** While one runs, the page shows snapshots, and input meant for its elements
+  doesn't reach them, so frequent ones make fast clicking feel stuck.
+
 ## Applying it on the web
 
 Load `assets/m3-expressive-tokens.css` before your styles. Everything below uses only the properties
@@ -941,7 +978,89 @@ Named pseudo-elements such as `(hero)` outrank `(*)`, so write overrides against
 browser's default root transition is a simultaneous cross-fade, while the top-level pattern fades the
 old screen out and only then fades the new one in. For top-level navigation, give
 `::view-transition-old(root)` and `::view-transition-new(root)` the same staggered timing as the
-`(hero)` pair above.
+`(hero)` pair above. Before adding page transitions, read [Restraint in navigation](#restraint-in-navigation).
+
+### 11. Enter and exit together
+
+People notice an entrance that isn't matched by an exit: a panel that widens open but snaps shut feels broken, even
+when each half is fine on its own. Give every animated entrance its exit, the same motion in reverse, usually a little
+faster. Two web traps:
+
+- **Removed elements can't animate.** `@if`/`v-if`/conditional rendering removes the element at once. Use the
+  framework's leave hook (Angular's `animate.leave`, Vue's `<Transition>`, React with a library or a delayed unmount),
+  or `@starting-style` plus `transition-behavior: allow-discrete` for `display: none`.
+- **A leaving element still takes up room** until it's gone, beside whatever replaced it. Plan the overlap: keep the
+  newcomer out of sight until the leaver is removed (an animation delay as long as the exit), or let both share the
+  space (a grid stack).
+
+```css
+/* A side panel that grows out of a 64px rail and goes back into it. Its content keeps its full width the whole time,
+   held to the far edge and uncovered as the panel widens, so nothing rewraps on the way. */
+.panel-opening,
+.panel-closing { overflow: hidden; align-items: flex-end; }
+.panel-opening > *,
+.panel-closing > * { inline-size: 320px; flex-shrink: 0; }
+.panel-opening {
+  animation:
+    panel-widen var(--m3e-motion-spring-default-spatial),
+    panel-fade-in var(--m3e-motion-spring-default-effects);
+}
+.panel-closing {
+  animation:
+    panel-narrow var(--m3e-motion-spring-default-spatial) forwards,
+    panel-fade-out var(--m3e-motion-spring-fast-effects) forwards;
+}
+/* The rail comes back once the panel is gone. */
+.rail-returning {
+  animation: panel-fade-in var(--m3e-motion-spring-fast-effects)
+    var(--m3e-motion-spring-default-spatial-duration) both;
+}
+@keyframes panel-widen { from { inline-size: 64px; } }
+@keyframes panel-narrow { to { inline-size: 64px; } }
+@keyframes panel-fade-in { from { opacity: 0; } }
+@keyframes panel-fade-out { to { opacity: 0; } }
+```
+
+Animating `inline-size` relays out the page beside the panel every frame, which is the point here (the page eases
+over) and fine for one panel; for anything bigger, move it with `transform` instead.
+
+### 12. Items arriving in a long or virtualized list
+
+A message, a call or a notification that arrives while the list is open can rise into place. Three rules keep it from
+turning into noise:
+
+- **Only arrivals animate**, not the first load, not older pages loaded above, not a list replaced by another (a
+  different conversation). One test covers all three: the items after the previous last item, if that item is still
+  in the list.
+- **Once per item.** A virtualized list destroys rows scrolled out of view and rebuilds them on the way back. Track
+  arrivals by the item's key and forget each key when its animation ends, so a rebuilt row doesn't animate again.
+- **Don't fight the row's positioning.** Virtual lists place rows with `transform`; an animation on `transform`
+  replaces that and throws the row to the top. Animate the individual `translate` property, which adds to `transform`.
+
+```css
+.row-arrived {
+  animation:
+    arrive-fade var(--m3e-motion-spring-default-effects) both,
+    arrive-rise var(--m3e-motion-spring-fast-spatial) both;
+}
+@keyframes arrive-fade { from { opacity: 0; } }
+@keyframes arrive-rise { from { translate: 0 12px; } }
+```
+
+```js
+// On each change to the items: everything after the previous last item arrived (unless that item is gone).
+const lastKey = items.length ? keyOf(items.at(-1)) : null;
+if (previousLastKey !== null && lastKey !== previousLastKey) {
+  const added = [];
+  for (let i = items.length - 1; i >= 0; i--) {
+    const key = keyOf(items[i]);
+    if (key === previousLastKey) { added.forEach((k) => arrived.add(k)); break; }
+    added.push(key);
+  }
+}
+previousLastKey = lastKey;
+// Template: class "row-arrived" while arrived.has(key); on the row's animationend: arrived.delete(key).
+```
 
 ## Do and don't
 
@@ -975,6 +1094,17 @@ old screen out and only then fades the new one in. For top-level navigation, giv
   levels, so an audit can't tell a fake one from a real one.
 - **Do** cap hero moments at one or two per product. **Don't** stack shape morph, bounce and
   parallax on one screen.
+- **Do** animate what changed where it changed (a panel growing from its rail, an arriving item, an
+  indicator). **Don't** fade and slide whole panes on every navigation: frequent pane transitions read
+  as slow, and View Transitions hold up input while they run.
+- **Do** give every animated entrance a matching exit. **Don't** let a panel open with motion and
+  vanish on close.
+- **Do** animate a positioned row's arrival with the `translate` property. **Don't** animate
+  `transform` on rows a virtual list positions with `transform`.
+- **Do** pick spatial or effects by what a `transition: all` actually changes (a hover background is
+  an effect). **Don't** default `all` to a spatial spring.
+- **Do** offer an in-app Reduce motion switch that sets the same helpers as the media query. **Don't**
+  let it turn motion back on while the system setting is on.
 
 ## Auditing
 
@@ -1005,6 +1135,11 @@ The consolidated list lives in `references/audit-checklist.md`. Motion-specific 
    inside `@supports (… linear(0, 1))` with a cubic-bezier base outside?
 10. **Restraint:** is there at most one or two hero moments, and is motion never the only cue for a
     state change?
+11. **Enter and exit:** does every element that animates in also animate out (MOT-17)?
+12. **Navigation in place:** do frequent navigations (section switches, list selections) switch content
+    in place, with motion kept to what changed (MOT-18)?
+13. **Arrivals:** in lists that animate arriving items, do only real arrivals animate, once each
+    (MOT-19)?
 
 ## Sources
 
@@ -1030,3 +1165,4 @@ The consolidated list lives in `references/audit-checklist.md`. Motion-specific 
 - `Document.startViewTransition()`: https://developer.mozilla.org/en-US/docs/Web/API/Document/startViewTransition
 - WCAG 2.3.3 Animation from Interactions: https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html
 - Motion (JS library) spring options: https://motion.dev/docs/spring
+- CSS `translate` property (composes with `transform`): https://developer.mozilla.org/en-US/docs/Web/CSS/translate

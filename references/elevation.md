@@ -204,6 +204,10 @@ between the layer that needs attention and the rest of the UI.
   should stay readable.
 - The 32% is guidance text plus a Compose component token (`ScrimTokens.ContainerOpacity = 0.32`).
   No web system token exists for it, which is why the skill ships `--m3e-scrim-opacity` as a helper.
+- **Not in a see-through window.** A desktop pop-up drawn as a card on a transparent window (an Electron
+  incoming-call card, a widget) has nothing of its own behind the card: a scrim there dims the window's
+  transparent margin and shows as a dark box around the card. Open dialogs in such a window without a
+  scrim and let them cover the card, or grow the window to fit them.
 
 ### Choosing a method
 

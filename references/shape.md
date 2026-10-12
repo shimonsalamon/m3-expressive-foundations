@@ -13,7 +13,8 @@ for imagery, decoration and the occasional focal element.
 - [What M3 Expressive changed](#what-m3-expressive-changed)
 - [Principles: using shape expressively](#principles-using-shape-expressively)
 - [Corner radius scale](#corner-radius-scale): the ten styles, asymmetric presets, corner-value tokens,
-  choosing a step, "full", inner corners, state through shape, customizing
+  choosing a step, "full", inner corners, state through shape, pressed and selected shapes by size (buttons, button
+  groups), customizing
 - [Optical roundness (nested radii)](#optical-roundness-nested-radii)
 - [The shape library (35 shapes)](#the-shape-library-35-shapes)
 - [Shape morphing](#shape-morphing)
@@ -236,10 +237,61 @@ shapes get squarer and near-square shapes get rounder.** Inner corners go either
 
 Illustrative (component value): a 40px round button squares from 20px to 8px (small) while pressed. Per-size
 values for buttons, toggles and joined groups live on Material's component pages
-(https://m3.material.io/components).
+(https://m3.material.io/components); the next section lists the buttons' and button groups'.
 
 Drive press, toggle and selection morphs on small and medium controls with
 `--m3e-motion-spring-fast-spatial`, this skill's default (see [Shape morphing](#shape-morphing)).
+
+### Pressed and selected shapes by size
+
+Material's button tokens (`md.comp.button.<size>.*`, read from the token database with
+`scripts/fetch-m3-spec.mjs components/buttons --tokens`, content build 2026-09-23) give the round button's shape per
+size. Icon buttons follow the same steps.
+
+| Size (height) | At rest (round) | Pressed | Selected (round toggle) |
+|---|---|---|---|
+| Extra small (32px) | full | small (8px) | medium (12px) |
+| Small (40px, the default) | full | small (8px) | medium (12px) |
+| Medium (56px) | full | medium (12px) | large (16px) |
+| Large (96px) | full | large (16px) | extra large (28px) |
+| Extra large (136px) | full | large (16px) | extra large (28px) |
+
+**One rule for every round button.** Products size buttons between these steps (a 48px icon button, a 64px call
+button), so a site-wide rule works better from the height than from a size class. Our interpolation, through
+Material's points at 40 and 56px: `clamp(8px, height / 4 - 2px, 16px)`.
+
+```css
+.round-button {
+  --height: 40px;                              /* the component's real height, ideally its own size token */
+  --shape: calc(var(--height) / 2);            /* full, as a real length so it can animate */
+  border-radius: var(--shape);
+  transition: border-radius var(--m3e-motion-spring-fast-spatial);
+}
+.round-button.icon-only { --shape: 50%; }      /* square box: 50% is round at any size and animates smoothly */
+.round-button:active:not(:disabled) {
+  --shape: clamp(8px, var(--height) / 4 - 2px, 16px);
+}
+.round-button:focus-visible::after {           /* a ring drawn as its own layer, 5px out (3px ring, 2px gap) */
+  border-radius: calc(var(--shape) + 5px);
+}
+```
+
+Apply it to every round button at once, in the shared stylesheet, and exclude what has its own behavior: FABs (the
+pressed-shape tokens are the button family's; a FAB keeps its corners), joined groups (their inner corners move
+instead, below), and any element that sets its own corners or a press scale. Every layer drawn inside the button (state
+layer, ripple container, focus ring) has to take the same corners, or the press shows a rounded layer inside a
+squarer button. For Angular Material's buttons, see
+[angular-material.md: Shape](angular-material.md#shape-the-press-morph-on-materials-buttons).
+
+**Button groups** (`md.comp.button-group.*`):
+
+- **Standard group:** a pressed button widens by 15% (`pressed.item.width.multiplier`, every size) on the fast
+  spatial spring, and its neighbors move aside and narrow for a moment. How much they narrow isn't a token; shrinking
+  each neighbor by half the growth (×0.925) keeps the row's length (our choice). In a grid of buttons, only neighbors
+  in the same row react.
+- **Connected group:** the inner corners change instead of the widths. Pressed: extra small (4px) for extra small,
+  small and medium groups, medium (12px) for large, large (16px) for extra large. Selected: 50%, so a selected segment
+  goes fully round. Neighbors don't move.
 
 ### Customizing
 

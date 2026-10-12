@@ -941,6 +941,18 @@ Reference: [shape.md](shape.md).
   at least half the cut size.
 - **Ref:** [shape.md: Cut corners and corner-shape](shape.md#cut-corners-and-corner-shape)
 
+#### SHP-17 Round buttons square up when pressed
+**Minor.** Do round buttons and icon buttons take a squarer shape while pressed, by their size, and spring back?
+- **Verify:** Press and hold buttons of each size and kind (filled, tonal, outlined, text, icon) at 10% animation
+  speed; read the computed `border-radius` at rest and while `:active`, and of the state-layer and ripple layers inside.
+- **Pass:** At rest the radius is half the height as a length (or 50% on a square icon button), never `9999px` or
+  `calc(infinity * 1px)`; pressed, it is about 8px at 40px tall, 12px at 56px and at most 16px
+  ([shape.md: Pressed and selected shapes by size](shape.md#pressed-and-selected-shapes-by-size)); the change runs on
+  the fast spatial spring (or default effects, SHP-15) and every inner layer and the focus ring take the same corners.
+  FABs, joined-group segments and controls with their own deliberate press behavior are out of scope. Fail a button
+  whose square flash at the start of the press shows a spring overshooting from a `9999px` rest.
+- **Ref:** [shape.md: Pressed and selected shapes by size](shape.md#pressed-and-selected-shapes-by-size)
+
 ## Motion (MOT)
 
 Reference: [motion.md](motion.md). Helpers are this skill's `--m3e-motion-spring-<speed>-<type>` web curves.
@@ -1123,6 +1135,35 @@ keeping state changes visible?
   extension of 10% of the distance the surface moves covers it; `overflow` on the surface itself would clip
   the extension, so scroll an inner element. A solid `box-shadow` used as the extension fails ELV-01.
 - **Ref:** [motion.md: Component transitions with the shorthands](motion.md#2-component-transitions-with-the-shorthands)
+
+#### MOT-17 Every entrance has an exit
+**Minor.** Does each element that animates in also animate out?
+- **Verify:** Open and close every panel, sheet, drawer, rail, popover and conditionally rendered region at 10%
+  speed.
+- **Pass:** Closing plays the opening in reverse (or a shorter version of it): a panel that widens open narrows shut, a
+  region that fades in fades out. Whatever replaces a leaving element doesn't jump or show beside it while it leaves.
+  Fail an entrance animation with an instant removal.
+- **Ref:** [motion.md: Enter and exit together](motion.md#11-enter-and-exit-together)
+
+#### MOT-18 Frequent navigation switches in place
+**Minor.** Do frequent navigations (section switches, selecting items in a list-detail layout) change content without
+whole-pane transitions?
+- **Verify:** Switch sections and select several list items in a row, quickly; look for View Transitions, router
+  animations or keyframes on the content area or detail pane.
+- **Pass:** Content switches in place; motion stays on what changed (an indicator, an arriving item, a panel growing
+  from its rail). Pane-level transitions are kept for rare moves such as a container transform into a full-screen
+  detail. Fail fades or slides of whole panes on every navigation, and transitions that hold up clicks while they run.
+- **Ref:** [motion.md: Restraint in navigation](motion.md#restraint-in-navigation)
+
+#### MOT-19 Only arrivals animate, once
+**Minor.** In lists that animate new items, does the animation play only for items that arrive while the list is open,
+and only once?
+- **Verify:** Open the list (first load), scroll up to load older items, switch to another list, receive an item,
+  then scroll it out of view and back.
+- **Pass:** Only the received item animates, and only the first time; first loads, older pages and switched lists
+  appear without it. In a virtualized list the rise uses the `translate` property (rows positioned with `transform`
+  keep their place).
+- **Ref:** [motion.md: Items arriving in a long or virtualized list](motion.md#12-items-arriving-in-a-long-or-virtualized-list)
 
 ## Elevation (ELV)
 
