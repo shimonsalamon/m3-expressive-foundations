@@ -1026,7 +1026,7 @@ over) and fine for one panel; for anything bigger, move it with `transform` inst
 
 ### 12. Items arriving in a long or virtualized list
 
-A message, a call or a notification that arrives while the list is open can rise into place. Three rules keep it from
+A message or a notification that arrives while the list is open can rise into place. Three rules keep it from
 turning into noise:
 
 - **Only arrivals animate**, not the first load, not older pages loaded above, not a list replaced by another (a

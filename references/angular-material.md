@@ -90,13 +90,13 @@ Component tokens are custom properties set on the component or an ancestor class
 pressed, disabled and ripple behavior intact, which a hand-written `background` does not.
 
 ```css
-/* A fixed end-call red on a filled button: container, label, state layer and ripple in one place. */
-.hangup-action {
-  --mat-button-filled-container-height: 64px;
-  --mat-button-filled-container-color: var(--app-color-end-call);
-  --mat-button-filled-label-text-color: var(--app-color-on-end-call);
-  --mat-button-filled-state-layer-color: var(--app-color-on-end-call);
-  --mat-button-filled-ripple-color: color-mix(in srgb, var(--app-color-on-end-call) 12%, transparent);
+/* A medium (56px) filled button in the tertiary role: container, label, state layer and ripple in one place. */
+.tertiary-action {
+  --mat-button-filled-container-height: 56px;
+  --mat-button-filled-container-color: var(--mat-sys-tertiary);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-tertiary);
+  --mat-button-filled-state-layer-color: var(--mat-sys-on-tertiary);
+  --mat-button-filled-ripple-color: color-mix(in srgb, var(--mat-sys-on-tertiary) 12%, transparent);
   --mat-button-filled-icon-spacing: 0; /* icon only: no gap reserved for a label */
   --mat-button-filled-icon-offset: 0;
 }

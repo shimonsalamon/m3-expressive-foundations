@@ -256,7 +256,7 @@ size. Icon buttons follow the same steps.
 | Large (96px) | full | large (16px) | extra large (28px) |
 | Extra large (136px) | full | large (16px) | extra large (28px) |
 
-**One rule for every round button.** Products size buttons between these steps (a 48px icon button, a 64px call
+**One rule for every round button.** Products size buttons between these steps (a 48px icon button, a 64px
 button), so a site-wide rule works better from the height than from a size class. Our interpolation, through
 Material's points at 40 and 56px: `clamp(8px, height / 4 - 2px, 16px)`.
 

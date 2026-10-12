@@ -1249,8 +1249,8 @@ icon and adds a tap. Keep the button only when the filters are many, or are fiel
 .list-filters .chip-row { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
 ```
 
-**A list and its main action, not tabs, on a phone.** When a compact layout shows a list (call history, messages) and
-the action that makes a new item (a dialpad, compose), don't put them in tabs side by side. Open on the list, with the
+**A list and its main action, not tabs, on a phone.** When a compact layout shows a list (messages, contacts) and
+the action that makes a new item (compose, add), don't put them in tabs side by side. Open on the list, with the
 action as a FAB at the bottom end; the action's screen gets a way back. Tabs make the two look like equals and make the
 action a tab switch away. On wider windows the same pair is list-detail, both visible.
 
@@ -1259,8 +1259,8 @@ action a tab switch away. On wider windows the same pair is list-detail, both vi
 - Put the way back where the way in was. If the FAB sat at the bottom end, put the action screen's "back to the list"
   control near that corner too, so the two toggle under the same thumb.
 
-**Secondary actions stay quiet.** Next to a screen's primary action (a Call button), a secondary one (Call history,
-Add contact) is a plain icon button with a tooltip: no container, standard size, square state layer. Giving it a FAB or
+**Secondary actions stay quiet.** Next to a screen's primary action (a Send button), a secondary one (Schedule,
+Attach) is a plain icon button with a tooltip: no container, standard size, square state layer. Giving it a FAB or
 a filled container competes with the primary action, and stretching an icon button to fill a slot makes its state
 layer an oval. Keep a matching empty slot on the other side if the primary action has to stay centered.
 
