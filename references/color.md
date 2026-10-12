@@ -665,25 +665,6 @@ light and dark values in an `@supports not (color: light-dark(#000, #fff))` bloc
 must hold 3:1 against `primary-container`. Add one only when no existing role fits. Specify its palette and tone for
 each theme and contrast level, name its pairings, and verify the ratios.
 
-### Fixed colors that carry a convention
-
-Some colors mean something because every other product uses them: a red end-call button, a green answer and call
-button. People find them by hue, so they shouldn't shift with the theme the way a harmonized custom color does (a
-harmonized red drifts toward the brand hue; `error` reads as brick in light mode and pale pink in dark, neither of
-them "hang up"). For these, a fixed color is the better choice (our recommendation):
-
-- **One hue, the same in light and dark**, with white content, as product tokens:
-  `--app-color-end-call: #db372d; --app-color-on-end-call: #fff; --app-color-start-call: #1e8e3e;`
-  `--app-color-on-start-call: #fff;` (the values one product shipped).
-- **Check both pairs.** The icon or label on the fill is non-text contrast at minimum (3:1) and text contrast if it's a
-  label (4.5:1): white measures 4.57:1 on `#db372d` and 4.21:1 on `#1e8e3e`, so a green with a text label needs a
-  darker shade. The fill against the surface around it needs 3:1 as well (those two reach 4.0 to 4.4:1 against the
-  baseline light and dark surfaces).
-- **Apply them through the component's own tokens** (container, label, state layer and ripple colors), so hover,
-  focus and press layers stay correct.
-- **Use them only for the convention**: the call and end-call actions, wherever they appear (call screen, incoming
-  call, pop-out, dialer). Everything else stays on roles.
-
 ## Dynamic color
 
 ### The pipeline
